@@ -32,6 +32,18 @@ Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯�
 - 用语音识别的 `SecretId` / `SecretKey`，不是 TRTC 的 `SDKAppID`；
 - App 里的 `Token` 只是和 Kindle 插件的本地共享密钥，默认 `change-me`。
 
+## 预编译 APK
+
+Debug 构建，可用 `adb install` 或文件管理器安装。
+
+[Download the debug APK](dist/reading-companion-android-0.1.0-debug.apk)
+
+SHA-256:
+
+```text
+069921a06f7e1779e88856f97c2be7b54d5a2ad98b42f588afa19ad2930f52c4
+```
+
 ## 构建运行
 
 需要 JDK 17 和 Android SDK 35。

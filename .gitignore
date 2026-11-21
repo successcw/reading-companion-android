@@ -8,3 +8,6 @@ local.properties
 *.aab
 .DS_Store
 captures/
+!dist/
+!dist/*.apk
+!dist/*.sha256

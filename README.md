@@ -32,6 +32,18 @@ An Android reading companion for Kindle + KOReader. It receives the current page
 - Use the ASR `SecretId` / `SecretKey`, not a TRTC `SDKAppID`.
 - `Token` in the app is only the local shared secret with the Kindle plugin; default `change-me`.
 
+## Prebuilt APK
+
+Debug build, installable with `adb install` or a file manager.
+
+[Download the debug APK](dist/reading-companion-android-0.1.0-debug.apk)
+
+SHA-256:
+
+```text
+069921a06f7e1779e88856f97c2be7b54d5a2ad98b42f588afa19ad2930f52c4
+```
+
 ## Build and run
 
 Requires JDK 17 and Android SDK 35.
