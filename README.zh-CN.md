@@ -2,7 +2,7 @@
 
 [English](README.md) | **简体中文**
 
-Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯云一句话识别，OpenCode Go 流式回答，Android 系统 TTS 朗读。
+Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯云一句话识别，OpenCode Go 流式回答，Edge TTS 朗读，失败自动回落 Android 系统 TTS。
 
 > 这是 Android MVP。iOS App 和 Kindle 插件是独立仓库：
 > [reading-companion-ios](https://github.com/successcw/reading-companion-ios) ·
@@ -16,7 +16,8 @@ Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯�
 - Kindle 上下文卡片：书名、章节、页码、进度；
 - 点按录音，`AudioRecord` 采集，腾讯云一句话识别；
 - OpenCode Go 流式回答；
-- Android 系统 TTS；猫咪空闲/听/说状态；
+- Edge 神经语音，失败自动回落 Android 系统 TTS；猫咪空闲/听/说状态；
+- 前台 Service，App 切后台后本地 Kindle 服务仍保持运行；
 - 文字输入兜底，方便测试或直接打字；
 - 密钥用 AndroidX EncryptedSharedPreferences 存储。
 
@@ -36,12 +37,12 @@ Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯�
 
 Debug 构建，可用 `adb install` 或文件管理器安装。
 
-[Download the debug APK](dist/reading-companion-android-0.1.0-debug.apk)
+[Download the debug APK](dist/reading-companion-android-0.2.0-debug.apk)
 
 SHA-256:
 
 ```text
-069921a06f7e1779e88856f97c2be7b54d5a2ad98b42f588afa19ad2930f52c4
+64e6f0602f6999392b94716677f7ae3252a0289e396753902dcc0d0f360d122d
 ```
 
 ## 构建运行
@@ -83,9 +84,7 @@ POST `/context` 后，App 的书名/章节/页码会更新；录音态 UI 正常
 
 ## 已知限制
 
-- Android MVP 使用系统 TTS，尚未移植 Edge TTS；
-- 还没有前台 Service；
-- ASR/LLM/TTS 端到端需要自己的 Key 和真实麦克风；
+- ASR/LLM/TTS 端到端需要自己的 Key 和真实麦克风；Edge TTS 是非官方接口，可能变化；
 - 不是 Play Store 可直接上架的成品。
 
 ## 许可证

@@ -260,6 +260,9 @@ private fun SettingsDialog(vm: AppViewModel, onDismiss: () -> Unit) {
                 OutlinedTextField(token, { token = it }, label = { Text("Kindle Token") }, singleLine = true)
                 OutlinedTextField(port, { port = it }, label = { Text("端口") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true)
+                TextButton(onClick = { vm.previewTts() }) {
+                    Text("试听 Edge TTS")
+                }
             }
         },
         confirmButton = {

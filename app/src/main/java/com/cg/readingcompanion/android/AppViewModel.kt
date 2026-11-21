@@ -1,6 +1,7 @@
 package com.cg.readingcompanion.android
 
 import android.app.Application
+import android.media.MediaPlayer
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import androidx.lifecycle.AndroidViewModel
@@ -32,8 +33,10 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     private val store = SecureStore(app)
     private val asr = TencentAsrClient()
     private val llm = LlmClient()
+    private val edgeTts = EdgeTtsClient()
     private val recorder = AudioRecorder()
-    private var server: LocalServer? = null
+    private var ttsJob: kotlinx.coroutines.Job? = null
+    private var mediaPlayer: MediaPlayer? = null
     private var ttsReady = false
     private var responseId = UUID.randomUUID().toString()
 
@@ -43,6 +46,12 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     val state: StateFlow<AppUiState> = _state.asStateFlow()
 
     init {
+        viewModelScope.launch {
+            ServerHub.context.collect { ctx -> update { it.copy(context = ctx) } }
+        }
+        viewModelScope.launch {
+            ServerHub.running.collect { running -> update { it.copy(serverRunning = running) } }
+        }
         tts = TextToSpeech(app) { status ->
             if (status == TextToSpeech.SUCCESS) {
                 ttsReady = true
@@ -55,32 +64,10 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
                 })
             }
         }
-        startServer()
     }
 
     private fun update(transform: (AppUiState) -> AppUiState) {
         _state.value = transform(_state.value)
-    }
-
-    private fun startServer() {
-        server?.stopServer()
-        val port = store.port
-        val created = LocalServer(
-            port = port,
-            tokenProvider = { store.token },
-            onContext = { ctx ->
-                update {
-                    it.copy(
-                        context = ctx,
-                        address = addressForDisplay(),
-                        status = if (it.isRecording) it.status else "点这里开始说话"
-                    )
-                }
-            }
-        )
-        created.startServer()
-        server = created
-        update { it.copy(serverRunning = created.running, address = addressForDisplay()) }
     }
 
     fun saveSettings(
@@ -99,7 +86,8 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
         store.tencentRegion = region.ifBlank { "ap-guangzhou" }
         store.token = token
         store.port = port
-        startServer()
+        LocalServerService.start(getApplication())
+        update { it.copy(address = addressForDisplay(), serverRunning = true) }
     }
 
     fun config(): LlmConfig = store.llmConfig()
@@ -195,13 +183,64 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
     }
 
     private fun speak(text: String) {
+        ttsJob?.cancel()
+        releasePlayer()
+        ttsJob = viewModelScope.launch {
+            val file = java.io.File(getApplication<Application>().cacheDir,
+                "edge-tts-${UUID.randomUUID()}.mp3")
+            val result = edgeTts.synthesize(text, "zh-CN-XiaoxiaoNeural", file)
+            if (result.isSuccess) {
+                withContext(Dispatchers.Main) {
+                    runCatching {
+                        val player = MediaPlayer()
+                        player.setDataSource(file.absolutePath)
+                        player.setOnCompletionListener {
+                            releasePlayer()
+                            update { it.copy(isSpeaking = false, status = "点这里开始说话") }
+                        }
+                        player.setOnErrorListener { _, _, _ ->
+                            releasePlayer()
+                            systemSpeak(text)
+                            true
+                        }
+                        player.prepare()
+                        player.start()
+                        mediaPlayer = player
+                        update { it.copy(isSpeaking = true, status = "说话中") }
+                    }.onFailure {
+                        systemSpeak(text)
+                    }
+                }
+            } else {
+                withContext(Dispatchers.Main) { systemSpeak(text) }
+            }
+        }
+    }
+
+    private fun systemSpeak(text: String) {
         if (!ttsReady) return
         tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "reply")
+        update { it.copy(status = "说话中") }
+    }
+
+    private fun releasePlayer() {
+        mediaPlayer?.let {
+            runCatching { it.stop() }
+            it.release()
+        }
+        mediaPlayer = null
+    }
+
+    fun previewTts() {
+        speak("你好，我是你的读书陪读。")
     }
 
     fun stopResponding() {
         responseId = UUID.randomUUID().toString()
         llm.cancel()
+        ttsJob?.cancel()
+        ttsJob = null
+        releasePlayer()
         if (ttsReady) tts.stop()
         update {
             it.copy(
@@ -215,8 +254,9 @@ class AppViewModel(app: Application) : AndroidViewModel(app) {
 
     override fun onCleared() {
         llm.cancel()
+        ttsJob?.cancel()
+        releasePlayer()
         recorder.stop()
-        server?.stopServer()
         if (::tts.isInitialized) {
             tts.stop()
             tts.shutdown()

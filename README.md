@@ -2,7 +2,7 @@
 
 **English** | [简体中文](README.zh-CN.md)
 
-An Android reading companion for Kindle + KOReader. It receives the current page over a local HTTP bridge, supports Tencent Cloud one-sentence Chinese ASR, streams answers from OpenCode Go, and reads them with Android's system TTS.
+An Android reading companion for Kindle + KOReader. It receives the current page over a local HTTP bridge, supports Tencent Cloud one-sentence Chinese ASR, streams answers from OpenCode Go, and reads them with Edge TTS (falling back to Android system TTS).
 
 > This is the Android MVP. The iOS app and Kindle plugin are separate repositories:
 > [reading-companion-ios](https://github.com/successcw/reading-companion-ios) ·
@@ -16,7 +16,8 @@ An Android reading companion for Kindle + KOReader. It receives the current page
 - Kindle context card: book, chapter, page, progress.
 - Push-to-talk recording with Android `AudioRecord`; Tencent Cloud one-sentence ASR.
 - OpenCode Go streaming chat.
-- Android system TTS; cat idle/listening/talking states.
+- Edge neural TTS with automatic Android system TTS fallback; cat idle/listening/talking states.
+- Foreground service keeps the local Kindle bridge alive when the app is in the background.
 - Text input fallback for testing or typing a question.
 - Keys stored with AndroidX EncryptedSharedPreferences.
 
@@ -36,12 +37,12 @@ An Android reading companion for Kindle + KOReader. It receives the current page
 
 Debug build, installable with `adb install` or a file manager.
 
-[Download the debug APK](dist/reading-companion-android-0.1.0-debug.apk)
+[Download the debug APK](dist/reading-companion-android-0.2.0-debug.apk)
 
 SHA-256:
 
 ```text
-069921a06f7e1779e88856f97c2be7b54d5a2ad98b42f588afa19ad2930f52c4
+64e6f0602f6999392b94716677f7ae3252a0289e396753902dcc0d0f360d122d
 ```
 
 ## Build and run
@@ -88,9 +89,7 @@ The emulator UI updates the context card and shows the recording state. Micropho
 
 ## Limitations
 
-- Android MVP uses system TTS; Edge TTS is not ported yet.
-- No background service yet, so Android may suspend the local server when backgrounded.
-- ASR/LLM/TTS end-to-end needs your own keys and a real microphone.
+- ASR/LLM/TTS end-to-end needs your own keys and a real microphone. Edge TTS is an unofficial endpoint and may change.
 - This is not an App Store/Play Store-ready release.
 
 ## License
