@@ -38,12 +38,12 @@ An Android reading companion for Kindle + KOReader. It receives the current page
 
 Debug build, installable with `adb install` or a file manager.
 
-[Download the debug APK](dist/reading-companion-android-0.2.1-debug.apk)
+[Download the debug APK](dist/reading-companion-android-0.2.2-debug.apk)
 
 SHA-256:
 
 ```text
-a06872c19d95f0b7dee9911a522dbe3bd0e43f812b20cab002ee47c792b503d3
+ce1b4e3e56e5cfb1b9cd75a6a876888f03591a4c0f5796b88e2a6ddfe81bf3d5
 ```
 
 ## Build and run

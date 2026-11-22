@@ -1,5 +1,6 @@
 package com.cg.readingcompanion.android
 
+import android.os.Build
 import java.net.DatagramPacket
 import java.net.DatagramSocket
 import java.net.InetSocketAddress
@@ -17,6 +18,9 @@ class DiscoveryResponder(
 
     fun start() {
         stop()
+        if (Build.FINGERPRINT.contains("generic") || Build.MODEL.contains("sdk_gphone")) {
+            return
+        }
         val s = try {
             DatagramSocket(null).apply {
                 reuseAddress = true
