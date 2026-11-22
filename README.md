@@ -19,6 +19,7 @@ An Android reading companion for Kindle + KOReader. It receives the current page
 - Edge neural TTS with automatic Android system TTS fallback; cat idle/listening/talking states.
 - Foreground service keeps the local Kindle bridge alive when the app is in the background.
 - UDP LAN discovery (`8791`): Kindle can find the app after switching between hotspot and home Wi-Fi.
+- Bonjour/mDNS advertisement: `_reading-companion._tcp` with `v=1` and `path=/context` (no secret in TXT).
 - Text input fallback for testing or typing a question.
 - Keys stored with AndroidX EncryptedSharedPreferences.
 
@@ -38,7 +39,7 @@ An Android reading companion for Kindle + KOReader. It receives the current page
 
 Debug build, installable with `adb install` or a file manager.
 
-[Download the debug APK](dist/reading-companion-android-0.2.2-debug.apk)
+[Download the debug APK](dist/reading-companion-android-0.2.3-debug.apk)
 
 SHA-256:
 

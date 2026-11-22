@@ -19,6 +19,7 @@ Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯�
 - Edge 神经语音，失败自动回落 Android 系统 TTS；猫咪空闲/听/说状态；
 - 前台 Service，App 切后台后本地 Kindle 服务仍保持运行；
 - UDP 局域网发现（`8791`）：热点/家庭 WiFi 切换后 Kindle 可自动找到 App；
+- Bonjour/mDNS 发布：`_reading-companion._tcp`，TXT 仅含 `v=1` 和 `path=/context`，不放密钥；
 - 文字输入兜底，方便测试或直接打字；
 - 密钥用 AndroidX EncryptedSharedPreferences 存储。
 
@@ -38,7 +39,7 @@ Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯�
 
 Debug 构建，可用 `adb install` 或文件管理器安装。
 
-[Download the debug APK](dist/reading-companion-android-0.2.2-debug.apk)
+[Download the debug APK](dist/reading-companion-android-0.2.3-debug.apk)
 
 SHA-256:
 
