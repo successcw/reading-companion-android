@@ -18,6 +18,7 @@ An Android reading companion for Kindle + KOReader. It receives the current page
 - OpenCode Go streaming chat.
 - Edge neural TTS with automatic Android system TTS fallback; cat idle/listening/talking states.
 - Foreground service keeps the local Kindle bridge alive when the app is in the background.
+- UDP LAN discovery (`8791`): Kindle can find the app after switching between hotspot and home Wi-Fi.
 - Text input fallback for testing or typing a question.
 - Keys stored with AndroidX EncryptedSharedPreferences.
 
@@ -37,12 +38,12 @@ An Android reading companion for Kindle + KOReader. It receives the current page
 
 Debug build, installable with `adb install` or a file manager.
 
-[Download the debug APK](dist/reading-companion-android-0.2.0-debug.apk)
+[Download the debug APK](dist/reading-companion-android-0.2.1-debug.apk)
 
 SHA-256:
 
 ```text
-64e6f0602f6999392b94716677f7ae3252a0289e396753902dcc0d0f360d122d
+a06872c19d95f0b7dee9911a522dbe3bd0e43f812b20cab002ee47c792b503d3
 ```
 
 ## Build and run
@@ -59,8 +60,8 @@ adb shell am start -n com.cg.readingcompanion.android/.MainActivity
 On a physical Android phone:
 
 1. Open Personal Hotspot and keep the app in the foreground.
-2. Use the address shown in the app (Android hotspots are often `192.168.43.1`, not the iPhone `172.20.10.1`).
-3. Put that URL and the same `change-me`/custom token into the Kindle plugin's `config.lua`.
+2. The plugin broadcasts `READING_COMPANION_DISCOVER_V1` on UDP `8791` and receives the app's current URL automatically.
+3. If discovery is blocked by the router, use the address shown in the app and put it in the Kindle plugin's `config.lua`.
 
 ## Emulator verification
 

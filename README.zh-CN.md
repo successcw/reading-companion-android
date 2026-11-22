@@ -18,6 +18,7 @@ Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯�
 - OpenCode Go 流式回答；
 - Edge 神经语音，失败自动回落 Android 系统 TTS；猫咪空闲/听/说状态；
 - 前台 Service，App 切后台后本地 Kindle 服务仍保持运行；
+- UDP 局域网发现（`8791`）：热点/家庭 WiFi 切换后 Kindle 可自动找到 App；
 - 文字输入兜底，方便测试或直接打字；
 - 密钥用 AndroidX EncryptedSharedPreferences 存储。
 
@@ -37,12 +38,12 @@ Android 版 Kindle + KOReader AI 陪读：本地 HTTP 接收当前页，腾讯�
 
 Debug 构建，可用 `adb install` 或文件管理器安装。
 
-[Download the debug APK](dist/reading-companion-android-0.2.0-debug.apk)
+[Download the debug APK](dist/reading-companion-android-0.2.1-debug.apk)
 
 SHA-256:
 
 ```text
-64e6f0602f6999392b94716677f7ae3252a0289e396753902dcc0d0f360d122d
+a06872c19d95f0b7dee9911a522dbe3bd0e43f812b20cab002ee47c792b503d3
 ```
 
 ## 构建运行
@@ -59,8 +60,8 @@ adb shell am start -n com.cg.readingcompanion.android/.MainActivity
 真机使用时：
 
 1. Android 打开个人热点，App 保持前台；
-2. 使用 App 首页显示的地址（Android 热点常见 `192.168.43.1`，不是 iPhone 的 `172.20.10.1`）；
-3. 把地址和相同 Token 填进 Kindle 插件 `config.lua`。
+2. 插件会向 UDP `8791` 广播 `READING_COMPANION_DISCOVER_V1`，App 自动回复当前地址；
+3. 如果路由器阻止广播，再用 App 首页显示的地址手动填 `config.lua`。
 
 ## 模拟器已验证
 

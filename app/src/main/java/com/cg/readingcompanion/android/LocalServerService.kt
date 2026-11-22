@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat
 
 class LocalServerService : Service() {
     private var server: LocalServer? = null
+    private var discovery: DiscoveryResponder? = null
     private val channelId = "reading_companion_server"
 
     override fun onCreate() {
@@ -32,6 +33,8 @@ class LocalServerService : Service() {
             it.startServer()
             ServerHub.running.value = it.running
         }
+        discovery?.stop()
+        discovery = DiscoveryResponder(store.port).also { it.start() }
     }
 
     private fun notification(): Notification {
@@ -60,6 +63,8 @@ class LocalServerService : Service() {
     }
 
     override fun onDestroy() {
+        discovery?.stop()
+        discovery = null
         server?.stopServer()
         ServerHub.running.value = false
         super.onDestroy()
