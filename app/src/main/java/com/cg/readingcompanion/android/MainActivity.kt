@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        WakeBroadcaster.send()
+        WakeBroadcaster.send(viewModel.state.value.address)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -6,9 +6,9 @@ import java.net.InetAddress
 
 object WakeBroadcaster {
     private const val PORT = 8792
-    private val message = "READING_COMPANION_WAKE_V1".toByteArray(Charsets.UTF_8)
-
-    fun send() {
+    fun send(url: String? = null) {
+        val message = ("READING_COMPANION_WAKE_V1" + (url?.let { "|$it" } ?: ""))
+            .toByteArray(Charsets.UTF_8)
         Thread({
             runCatching {
                 DatagramSocket().use { socket ->
