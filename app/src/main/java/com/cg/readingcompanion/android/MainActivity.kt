@@ -18,6 +18,11 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: AppViewModel
 
+    override fun onResume() {
+        super.onResume()
+        WakeBroadcaster.send()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = androidx.lifecycle.ViewModelProvider(this)[AppViewModel::class.java]
