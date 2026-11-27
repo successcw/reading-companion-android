@@ -4,8 +4,8 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.net.ConnectivityManager
+import android.net.Network
 import androidx.core.app.ActivityCompat
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -20,22 +20,26 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var viewModel: AppViewModel
 
-    private val wakeHandler = Handler(Looper.getMainLooper())
-    private val wakeRunnable = object : Runnable {
-        override fun run() {
+    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+        override fun onAvailable(network: Network) {
             WakeBroadcaster.send(viewModel.state.value.address)
-            wakeHandler.postDelayed(this, 1_000)
         }
     }
 
     override fun onResume() {
         super.onResume()
         WakeBroadcaster.send(viewModel.state.value.address)
-        wakeHandler.postDelayed(wakeRunnable, 1_000)
+        runCatching {
+            (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager)
+                .registerDefaultNetworkCallback(networkCallback)
+        }
     }
 
     override fun onPause() {
-        wakeHandler.removeCallbacks(wakeRunnable)
+        runCatching {
+            (getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager)
+                .unregisterNetworkCallback(networkCallback)
+        }
         super.onPause()
     }
 
